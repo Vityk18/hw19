@@ -1,0 +1,11 @@
+.block {
+        color: #111;
+        padding: 20px;
+        
+}
+
+.images {
+    display: flexbox;
+    padding: 40px 20px
+    
+}
