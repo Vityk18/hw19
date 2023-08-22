@@ -10,7 +10,7 @@ function App() {
     <Router>
       <div>
         <nav className="navigation">
-          <Link to="/hw19/">Main</Link>
+          <Link to="/">Main</Link>
           <Link to="/posts">Posts</Link>
           <Link to="/photos">Photos</Link>
           <Link to="/contacts">Contacts</Link>
