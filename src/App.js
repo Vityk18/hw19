@@ -23,10 +23,10 @@ function App() {
         <Link to="/contacts">Contacts</Link>
       </nav>
       <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/posts" element={<Posts />} />
-        <Route path="/photos" element={<Photos />} />
-        <Route path="/contacts" element={<Contacts />} />
+        <Route path="/hw19/" element={<Main />} />
+        <Route path="/hw19/posts" element={<Posts />} />
+        <Route path="/hw19/photos" element={<Photos />} />
+        <Route path="/hw19/contacts" element={<Contacts />} />
       </Routes>
       </div>
     </Router>
