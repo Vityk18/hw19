@@ -1,8 +1,8 @@
 import React from "react";
-import avatar from "./img/elon.jpg";
-import verified from "./img/Verified.jpg";
-import contentImg from "./img/contentImg.jpg";
-import "./Posts.css";
+import avatar from "../../assets/img/elon.jpg";
+import verified from "../../assets/img/Verified.jpg";
+import contentImg from "../../assets/img/contentImg.jpg";
+import "../../pages/posts/posts.css";
 
 const person = {
   name: "Elon Musk",
@@ -15,7 +15,7 @@ const person = {
 };
 
 
-export default function Post(props) {
+export default function Post({content}) {
   return (
     <div className="App">
       <div className="post">
@@ -31,7 +31,7 @@ export default function Post(props) {
           <div className="date">· {person.date}</div>
         </div>
         <div className="content">
-          {props.content}
+          {content}
           <div className="contentImg">
             <img src={person.contentImg} className="contImg" />
           </div>

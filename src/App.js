@@ -1,9 +1,10 @@
 import "./App.css";
 import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Main from "./pages/main/Main.js";
-import Posts from "./pages/posts/Posts.js";
-import Photos from "./pages/photos/Photos";
+import Main from "./pages/main/main.js";
+import Posts from "./pages/posts/posts.js";
+import Photos from "./pages/photos/photos";
 import Contacts from "./pages/contacts/contacts";
+import Contact from "./pages/contact";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/posts" element={<Posts />} />
           <Route path="/photos" element={<Photos />} />
           <Route path="/contacts" element={<Contacts />} />
+          <Route path="/contact/:id" element={<Contact />} />
         </Routes>
       </div>
     </Router>
