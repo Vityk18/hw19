@@ -1,171 +1,95 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
+
+import {contactList, checkboxFieldsName} from "../../constants/contacts";
+import {useNavigate} from "react-router-dom";
+
 import "./contacts.css";
-import { contacts } from "./ContactList.js";
-
-function Input() {
-  const [value, setValue] = useState("");
-
-  const onChange = (event) => {
-    setValue(event.target.value);
-  };
-
-  return {
-    value,
-    onChange,
-  };
-}
-
-function OpenContact(initialValue) {
-  const [contact, setContact] = useState(initialValue);
-
-  const open = (newContact) => {
-    setContact(newContact);
-  };
-
-  const close = () => {
-    setContact(null);
-  };
-
-  return {
-    contact,
-    open,
-    close,
-  };
-}
-
-function Data(input, manButton, womenButton) {
-  let result = [];
-
-  let arr = contacts.filter((e) => {
-    return (
-      e.firstName.toLowerCase().includes(input.toLowerCase()) ||
-      e.lastName.toLowerCase().includes(input.toLowerCase()) ||
-      e.phone.toLowerCase().includes(input.toLowerCase())
-    );
-  });
-
-  if (!manButton) {
-    arr = contacts.filter((e) => {
-      return e.gender !== "male";
-    });
-  }
-
-  if (!womenButton) {
-    arr = contacts.filter((e) => {
-      return e.gender !== "female";
-    });
-  }
-  arr.map((e) => result.push(e));
-
-  return result;
-}
 
 function Contacts() {
-  const [manButton, setManButton] = useState(true);
-  const [womenButton, setWomenButton] = useState(true);
+    const navigate = useNavigate();
+    const [checkboxesState, setCheckboxesState] = useState({
+        male: true,
+        female: true
+    })
+    const [data, setData] = useState([]);
+    const [search, setSearch] = useState('');
 
-  function changeManButton() {
-    setManButton(!manButton);
-  }
+    useEffect(() => {
+        let result = [...contactList.filter(({gender}) => !gender)];
 
-  function changeWomanButton() {
-    setWomenButton(!womenButton);
-  }
+        Object.entries(checkboxesState).map(([key, value]) => {
+            if (value) {
+                contactList.map((el, index) => el.gender === key && result.splice(index, 0, el))
+            }
+        });
 
-  const input = Input();
-  const data = Data(input.value, manButton, womenButton);
-  const openContact = OpenContact(null);
+        if (search.length) {
+            result = result.filter(({firstName, lastName, phone}) => {
+                return `${firstName.toLowerCase()}${lastName.toLowerCase()}${phone.toLowerCase()}`.includes(search.toLowerCase());
+            })
+        }
 
-  const click = (contact) => {
-    openContact.open(contact);
-  };
+        setData(result);
+    }, [checkboxesState, search])
 
-  return (
-    <div className="contacts">
-      <div className="list">
-        <div className="container">
-          {!openContact.contact && (
-            <>
-              <h1 className="pb-3">Contacts</h1>
-              <div>
-                <div className="form-check form-switch">
-                  <input
-                    onClick={changeManButton}
-                    className="form-check-input"
-                    type="checkbox"
-                    id="flexSwitchCheckChecked"
-                    defaultChecked
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="flexSwitchCheckChecked"
-                  >
-                    Чоловіки
-                  </label>
+    const changeCheckboxField = ({target: {checked}}, checkboxName) => {
+        setCheckboxesState({...checkboxesState, [checkboxName]: checked})
+    }
+
+    return (
+        <div className="contacts">
+            <div className="list">
+                <div className="container">
+                    <h1 className="pb-3">Contacts</h1>
+                    <div>
+                        {Object.entries(checkboxesState).map(([key, value]) => (
+                            <div className="form-check form-switch" key={key}>
+                                <input
+                                    onChange={(e) => changeCheckboxField(e, key)}
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="flexSwitchCheckChecked"
+                                    checked={value}
+                                />
+                                <label
+                                    className="form-check-label"
+                                    htmlFor="flexSwitchCheckChecked"
+                                >
+                                    {checkboxFieldsName[key]}
+                                </label>
+                            </div>
+                        ))
+                        }
+                    </div>
+                    <form className="pt-3 nosubmit">
+                        <input
+                            className="nosubmit"
+                            type="search"
+                            placeholder="Search..."
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </form>
                 </div>
-                <div className="form-check form-switch">
-                  <input
-                    onClick={changeWomanButton}
-                    className="form-check-input"
-                    type="checkbox"
-                    id="flexSwitchCheckChecked"
-                    defaultChecked
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="flexSwitchCheckChecked"
-                  >
-                    Жінки
-                  </label>
+                <div>
+                    {data.length > 0 ? (
+                        data.map((contact, index) => (
+                            <div key={index} onClick={() => navigate(`/contact/${contact.id}`)}>
+                                <p>
+                                    {contact.firstName} {contact.lastName}
+                                </p>
+                                {index < data.length - 1 && <hr/>}
+                            </div>
+                        ))
+                    ) : (
+                        <div>
+                            <p className="nosubmit">Немає збігів для </p>
+                        </div>
+                    )}
                 </div>
-              </div>
-              <form className="pt-3 nosubmit">
-                <input
-                  className="nosubmit"
-                  type="search"
-                  placeholder="Search..."
-                  {...input}
-                />
-              </form>
-            </>
-          )}
+
+            </div>
         </div>
-        {openContact.contact ? (
-          <div>
-            <h2 className="pb-3 pt-3">
-              {openContact.contact.firstName} {openContact.contact.lastName}
-            </h2>
-            <p>phone: {openContact.contact.phone}</p>
-            <p>gender: {openContact.contact.gender}</p>
-            <button
-              type="button"
-              className="btn btn-link"
-              onClick={openContact.close}
-            >
-              назад
-            </button>
-          </div>
-        ) : (
-          <div>
-            {data.length > 0 ? (
-              data.map((contact, index) => (
-                <div key={index} onClick={() => click(contact)}>
-                  <p>
-                    {contact.firstName} {contact.lastName}
-                  </p>
-                  {index < data.length - 1 && <hr />}
-                </div>
-              ))
-            ) : (
-              <div>
-                <p className="nosubmit">Немає збігів для {input.value}</p>{" "}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Contacts;
